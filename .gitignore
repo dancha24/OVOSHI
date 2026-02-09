@@ -1,0 +1,32 @@
+# Cursor / IDE
+.cursor/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+.env
+*.egg-info/
+.eggs/
+
+# Node
+node_modules/
+npm-debug.log*
+.npx
+
+# Build
+dist/
+build/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Obsidian (локальные настройки плагинов)
+OVOSHI Docs/.obsidian/plugins/*/data.json
