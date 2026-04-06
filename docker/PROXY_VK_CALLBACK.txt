@@ -1,0 +1,63 @@
+502 на http://ovoshipubgm.ru/vk/callback/
+================================================
+
+502 отдаёт nginx/NPM, когда до upstream соединение не установилось.
+
+Рекомендуемая схема (docker-compose.domain.yml)
+-----------------------------------------------
+Поднимаете стек с файлом domain — в нём сервис **gateway** (nginx) на порту **59728** (если занят — поменяйте в docker-compose.domain.yml).
+
+В Nginx Proxy Manager для ovoshipubgm.ru:
+  Forward Scheme: http
+  Forward Hostname: host.docker.internal   (если NPM в Docker на том же ПК; иначе IP сервера)
+  Forward Port: 59728
+
+Тогда один upstream отдаёт и сайт, и /vk/, и /api/ — без ручного выбора 59722 vs 3050.
+
+Проверка с сервера:
+  curl -sS http://127.0.0.1:59728/vk/ping/
+  → vk_ok
+
+Что проверить (без gateway)
+---------------------------
+
+1) Backend запущен:
+   docker compose ps
+   Должен быть Up у сервиса backend.
+
+2) Прямой доступ к Gunicorn:
+   curl -sS http://127.0.0.1:59722/vk/ping/
+   Ожидается: vk_ok
+
+3) Nginx Proxy Manager — схема к upstream: HTTP.
+
+   Forward Hostname / IP:
+   - NPM в Docker на ТОМ ЖЕ хосте: host.docker.internal (Windows/Mac) или 172.17.0.1 (Linux).
+   - НЕ имя контейнера, если NPM в другой docker-сети.
+
+   Forward Port: 59722 или 8165 (только backend), НЕ 3050 (фронт).
+
+4) Websockets для Callback ВК не обязательны; достаточно обычного HTTP POST.
+
+5) После правки NPM: вкладка SSL → сохранить, иногда нужен «Force SSL».
+
+Быстрая проверка после настройки
+---------------------------------
+В браузере: http://ovoshipubgm.ru/vk/ping/  → должно быть vk_ok
+             http://ovoshipubgm.ru/vk/diag/   → текст диагностики
+
+Если /vk/ping/ даёт 502 — upstream в NPM всё ещё неверный или порт закрыт файрволом.
+
+
+Статика /css/ и /assets/ (NPM должен смотреть на gateway Docker)
+----------------------------------------------------------------
+Если в NPM домен смотрит не на **gateway :59728**, а на один только backend или
+на «статическую папку» с SPA-fallback, запросы к `/css/*.css` или `/assets/*`
+могут отдавать HTML главной.
+
+Прод OVOSHI: в NPM Forward Port = **59728**, Scheme http (см. выше).
+После смены фронта: `docker compose … build frontend --no-cache && up -d`.
+
+Проверка на хосте со стеком (имя файла возьми из dist/index.html — index-*.css):
+  curl -sI http://127.0.0.1:59728/css/bootstrap.min.css
+Ожидается Content-Type: text/css. Если text/html — неверный upstream или старый образ.

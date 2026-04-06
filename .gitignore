@@ -1,6 +1,10 @@
 # Cursor / IDE
 .cursor/
 
+# Django
+backend/staticfiles/
+backend/media/
+
 # Python
 __pycache__/
 *.py[cod]
@@ -30,3 +34,7 @@ Thumbs.db
 
 # Obsidian (локальные настройки плагинов)
 OVOSHI Docs/.obsidian/plugins/*/data.json
+OVOSHI Docs/.obsidian/workspace.json
+
+# Сторонний шаблон (не часть приложения)
+Wingo/

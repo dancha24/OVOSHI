@@ -1,0 +1,40 @@
+# Домен ovoshipubgm.ru + порт 8165 под прокси (рядом с 59722 для прямого доступа).
+# Запуск с dev (из папки docker):
+#   .\dev.ps1 -Gateway up -d --build
+#   HMR по HTTPS (NPM): .\dev.ps1 -Gateway -HotFrontend up -d --build
+#
+# 502 у NPM: не вешайте домен на порт 3050 (фронт). Варианты:
+#   A) Прокси на gateway: Forward HTTP → хост:59728 — сайт, /leader/* (заявки лидера), /admin/ = Django.
+#   B) Только backend :59722 — тогда /leader/* с домена не откроется; заявки: Django /admin/users/clanapplication/
+
+services:
+  gateway:
+    image: nginx:alpine
+    ports:
+      - "59728:80"
+    volumes:
+      - ./nginx/ovoshi-gateway.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+      - frontend
+
+  backend:
+    environment:
+      ALLOWED_HOSTS: localhost,127.0.0.1,ovoshipubgm.ru
+      # NPM → gateway по HTTP: для OAuth и redirect доверяем X-Forwarded-Proto: https
+      DJANGO_BEHIND_HTTPS_PROXY: "1"
+      # Явно оставляем доступ по любому Host (прокси часто шлёт иной Host / internal name)
+      DJANGO_ALLOW_ALL_HOSTS: "1"
+      CSRF_TRUSTED_ORIGINS: https://ovoshipubgm.ru,http://ovoshipubgm.ru,http://localhost:3050,http://127.0.0.1:3050,http://localhost:3000,http://127.0.0.1:3000
+      CORS_ORIGINS: https://ovoshipubgm.ru,http://ovoshipubgm.ru,http://localhost:3000,http://localhost:3050,http://127.0.0.1:3000,http://127.0.0.1:3050
+      FRONTEND_URL: https://ovoshipubgm.ru
+    ports:
+      - "59722:8000"
+      - "8165:8000"
+
+  frontend:
+    build:
+      args:
+        # Пусто = браузер шлёт /api на тот же хост (gateway), без mixed content при HTTPS на NPM
+        VITE_API_URL: ""
+        VITE_VK_ID: ${VK_CLIENT_ID:-}

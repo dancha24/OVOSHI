@@ -1,0 +1,71 @@
+# OVOSHI clan site — MVP
+# Правки CSS/JS без rebuild образа фронта: .\up-hot-frontend.ps1 up -d --build (см. docker-compose.hot-frontend.yml).
+# Прод-статика в образе (nginx+dist): docker compose … build frontend && up -d — только когда нужен именно prod-бандл.
+# Локальная разработка: .\dev.ps1 up -d --build  или  .\dev.ps1 -Gateway up -d --build
+# Callback API ВК: публичный https://ваш-домен/vk/callback/ → прокси на backend.
+# Нет ответа бота: открой https://домен/vk/diag/ в браузере; в логах при сообщении боту должен быть POST /vk/callback/
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ovoshi
+      POSTGRES_USER: ovoshi
+      POSTGRES_PASSWORD: ovoshi
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ovoshi"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    ports:
+      - "59722:8000"
+    env_file:
+      - path: ../backend/.env.example
+        required: true
+      - path: ../backend/.env
+        required: false
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: ovoshi
+      POSTGRES_USER: ovoshi
+      POSTGRES_PASSWORD: ovoshi
+      DEBUG: "1"
+      # Иначе Callback ВК на https://домен/... даёт 400 DisallowedHost → «Invalid response code»
+      DJANGO_ALLOW_ALL_HOSTS: "1"
+      FRONTEND_URL: http://localhost:3050
+      CORS_ORIGINS: http://localhost:3000,http://localhost:3050,http://127.0.0.1:3000,http://127.0.0.1:3050
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ../backend/media:/app/media
+      - ../backend/staticfiles:/app/staticfiles
+      # Чтобы сгенерированные миграции попадали в репо (не перезаписываем весь /app)
+      - ../backend/users/migrations:/app/users/migrations
+      - ../backend/core/migrations:/app/core/migrations
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      args:
+        # Куда браузер шлёт /api (Vite вшивает при npm run build)
+        VITE_API_URL: http://localhost:59722
+        # Из docker/.env или --env-file ../backend/.env при build
+        VITE_VK_ID: ${VK_CLIENT_ID:-}
+    ports:
+      - "3050:3000"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata: {}

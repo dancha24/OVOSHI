@@ -1,0 +1,37 @@
+# Горячий фронт: ../frontend с хоста + Vite dev в контейнере — правки .css/.jsx без docker build frontend.
+#
+# Разработка + домен + HMR (рекомендуется вместе с docker-compose.dev.yml):
+#   Windows:  .\dev.ps1 -Gateway -HotFrontend up -d --build
+#
+# Прод-стек без dev (только yml + domain):
+#   Windows:  .\up-hot-frontend.ps1 up -d --build   или  .\up-prod.ps1 -HotFrontend up -d --build
+#
+# Linux/macOS (dev + domain + hot):
+#   docker compose --env-file ../backend/.env -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.domain.yml -f docker-compose.hot-frontend.yml up -d --build
+#
+# Не передаём VITE_API_URL — запросы на /api с того же хоста (нет mixed content при HTTPS на NPM).
+# Тест через https://домен: NPM → хост:59728 (gateway), Vite за hot-frontend.
+# HMR: по умолчанию wss:443 (NPM с SSL). Только HTTP на NPM — в docker/.env: VITE_HMR_PROTOCOL=ws, VITE_HMR_CLIENT_PORT=80.
+# Локально http://127.0.0.1:3050 без домена — не добавляйте этот файл (см. dev.ps1 без -HotFrontend).
+# «Чистый» прод (nginx + dist): up-prod.ps1 БЕЗ -HotFrontend и build frontend.
+#
+# Подключается последним из override-файлов (после domain.yml; при dev — после docker-compose.dev.yml).
+
+services:
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ../frontend:/app
+      - frontend_node_modules:/app/node_modules
+    environment:
+      VITE_VK_ID: ${VK_CLIENT_ID:-}
+      VITE_HMR_HOST: ${VITE_HMR_HOST:-ovoshipubgm.ru}
+      VITE_HMR_PROTOCOL: ${VITE_HMR_PROTOCOL:-wss}
+      VITE_HMR_CLIENT_PORT: ${VITE_HMR_CLIENT_PORT:-443}
+      CHOKIDAR_USEPOLLING: "1"
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+
+volumes:
+  frontend_node_modules: {}

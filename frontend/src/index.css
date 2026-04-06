@@ -1,0 +1,399 @@
+/* OVOSHI — тёмная тема в духе интерфейса ВКонтакте */
+:root,
+[data-bs-theme='dark'] {
+  --vk-bg-main: #19191a;
+  --vk-bg-sidebar: #222222;
+  --vk-bg-elevated: #2a2a2b;
+  --vk-bg-hover: #2d2d30;
+  --vk-bg-card: #252526;
+  --vk-border: rgba(255, 255, 255, 0.08);
+  --vk-text: #e1e3e6;
+  --vk-text-secondary: #939393;
+  --vk-text-muted: #656565;
+  --vk-link: #71aaeb;
+  --vk-link-hover: #8cb7f0;
+  /* Кнопки / акцент — «вк-шный» синий */
+  --ovoshi-accent: #5181b8;
+  --ovoshi-accent-hover: #5b88bc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    'Roboto',
+    'Helvetica Neue',
+    Helvetica,
+    Arial,
+    sans-serif;
+  background-color: var(--vk-bg-main);
+  color: var(--vk-text);
+}
+
+/* Карточки и формы в духе ВК: скругление, без жёсткой тени */
+.vk-card.card,
+main .card {
+  background-color: var(--vk-bg-card);
+  border: 1px solid var(--vk-border);
+  border-radius: 12px;
+  box-shadow: none !important;
+}
+
+/* Заголовки карточек: без bg-white — иначе в dark-теме текст почти не виден */
+.vk-card-header.card-header,
+main .card > .card-header {
+  background-color: var(--vk-bg-elevated) !important;
+  color: var(--vk-text) !important;
+  border-bottom: 1px solid var(--vk-border);
+}
+
+main .card > .card-header .btn-outline-secondary {
+  --bs-btn-color: var(--vk-text-secondary);
+  --bs-btn-border-color: rgba(255, 255, 255, 0.22);
+  --bs-btn-hover-bg: rgba(255, 255, 255, 0.08);
+  --bs-btn-hover-border-color: rgba(255, 255, 255, 0.35);
+  --bs-btn-hover-color: var(--vk-text);
+}
+
+/* Списки определений (профиль): подписи чуть приглушённее значений */
+main dl.row dt {
+  color: var(--vk-text-secondary);
+}
+
+main dl.row dd {
+  color: var(--vk-text);
+}
+
+/* Успех / ошибка в таблицах на тёмном фоне */
+main .text-success {
+  color: #7dd87f !important;
+}
+
+main .text-danger {
+  color: #ff7a7a !important;
+}
+
+main .form-label {
+  color: var(--vk-text);
+}
+
+.vk-shell {
+  background: var(--vk-bg-main);
+  color: var(--vk-text);
+}
+
+.vk-sidebar {
+  width: 268px;
+  min-height: 100vh;
+  background: var(--vk-bg-sidebar);
+  border-right: 1px solid var(--vk-border);
+}
+
+.vk-sidebar-brand {
+  padding: 0.35rem 0.65rem;
+  border-radius: 10px;
+  color: var(--vk-text);
+}
+
+.vk-sidebar-brand:hover {
+  background: var(--vk-bg-hover);
+  color: var(--vk-text);
+}
+
+.vk-sidebar-brand__text {
+  color: var(--vk-text);
+  letter-spacing: 0.02em;
+  font-size: 1.05rem;
+}
+
+.vk-nav-link {
+  color: var(--vk-text) !important;
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem !important;
+  font-size: 0.9375rem;
+  text-decoration: none !important;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.vk-nav-link:hover {
+  background: var(--vk-bg-hover) !important;
+  color: var(--vk-text) !important;
+}
+
+.vk-nav-link--active {
+  background: rgba(113, 170, 235, 0.14) !important;
+  color: var(--vk-link) !important;
+}
+
+.vk-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.78;
+  flex-shrink: 0;
+}
+
+.vk-nav-link--active .vk-nav-icon,
+.vk-nav-link.active .vk-nav-icon {
+  opacity: 1;
+  color: var(--vk-link);
+}
+
+.vk-nav-separator {
+  height: 1px;
+  background: var(--vk-border);
+}
+
+.vk-text-muted {
+  color: var(--vk-text-muted) !important;
+}
+
+.vk-main-column {
+  background: var(--vk-bg-main);
+}
+
+.vk-main {
+  background: var(--vk-bg-main);
+}
+
+.vk-mobile-bar {
+  background: var(--vk-bg-sidebar);
+  border-bottom: 1px solid var(--vk-border);
+}
+
+.vk-mobile-bar__title {
+  color: var(--vk-text);
+}
+
+.vk-mobile-menu-btn {
+  color: var(--vk-text) !important;
+}
+
+.vk-toggler-icon {
+  width: 1.35rem;
+  height: 1.35rem;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28225, 227, 230, 0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+}
+
+.vk-offcanvas {
+  background-color: var(--vk-bg-sidebar) !important;
+  width: min(288px, 88vw) !important;
+  border-right: 1px solid var(--vk-border) !important;
+}
+
+.vk-offcanvas-header {
+  padding-bottom: 0;
+}
+
+.vk-offcanvas-title {
+  color: var(--vk-text-secondary);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Ссылки в контенте — как у ВК */
+main a:not(.nav-link):not(.navbar-brand):not(.btn):not(.alert-link) {
+  color: var(--vk-link);
+  text-decoration: none;
+}
+
+main a:not(.nav-link):not(.navbar-brand):not(.btn):not(.alert-link):hover {
+  color: var(--vk-link-hover);
+  text-decoration: underline;
+}
+
+.text-secondary,
+main .text-secondary {
+  color: var(--vk-text-secondary) !important;
+}
+
+.text-muted,
+main .text-muted {
+  color: var(--vk-text-muted) !important;
+}
+
+main .lead.text-secondary {
+  color: var(--vk-text-secondary) !important;
+}
+
+.bg-ovoshi {
+  background-color: var(--vk-bg-sidebar) !important;
+}
+
+.navbar-ovoshi .nav-link {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+.navbar-ovoshi .nav-link:hover {
+  color: #fff !important;
+}
+
+.navbar-ovoshi .navbar-brand {
+  color: #fff !important;
+}
+
+/* Таблицы в кабинете */
+main .table {
+  color: var(--vk-text);
+  border-color: var(--vk-border);
+  --bs-table-bg: transparent;
+}
+
+main .table thead.table-light th {
+  background-color: var(--vk-bg-elevated) !important;
+  color: var(--vk-text-secondary) !important;
+  border-color: var(--vk-border) !important;
+}
+
+main .table-striped > tbody > tr:nth-of-type(odd) > * {
+  --bs-table-accent-bg: rgba(255, 255, 255, 0.03);
+}
+
+main .table-hover tbody tr:hover > * {
+  --bs-table-accent-bg: rgba(113, 170, 235, 0.06);
+}
+
+main .table > :not(caption) > * > * {
+  border-bottom-color: var(--vk-border);
+}
+
+/* Формы */
+main .form-control,
+main .form-select {
+  background-color: var(--vk-bg-elevated);
+  border-color: var(--vk-border);
+  color: var(--vk-text);
+}
+
+main .form-control:focus,
+main .form-select:focus {
+  background-color: var(--vk-bg-elevated);
+  border-color: var(--ovoshi-accent);
+  color: var(--vk-text);
+  box-shadow: 0 0 0 0.2rem rgba(81, 129, 184, 0.25);
+}
+
+main .form-control::placeholder {
+  color: var(--vk-text-muted);
+}
+
+.btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-color: #fff;
+  --bs-btn-bg: var(--ovoshi-accent);
+  --bs-btn-border-color: var(--ovoshi-accent);
+  --bs-btn-hover-bg: var(--ovoshi-accent-hover);
+  --bs-btn-hover-border-color: var(--ovoshi-accent-hover);
+  --bs-btn-active-bg: var(--ovoshi-accent-hover);
+  --bs-btn-active-border-color: var(--ovoshi-accent-hover);
+}
+
+main a.btn.btn-primary,
+main a.btn.btn-primary:hover,
+main a.btn.btn-primary:focus-visible,
+main .btn.btn-primary,
+main button.btn-primary {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff;
+}
+
+main .btn.btn-primary:hover,
+main button.btn-primary:hover {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff;
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--vk-link);
+  --bs-btn-border-color: rgba(113, 170, 235, 0.45);
+  --bs-btn-hover-bg: rgba(113, 170, 235, 0.12);
+  --bs-btn-hover-border-color: var(--vk-link);
+  --bs-btn-hover-color: var(--vk-link-hover);
+  --bs-btn-active-bg: rgba(113, 170, 235, 0.2);
+  --bs-btn-active-border-color: var(--vk-link);
+  --bs-btn-active-color: #fff;
+}
+
+.btn-outline-primary.active,
+.btn-outline-primary.show,
+.btn-outline-primary:first-child:active,
+:not(.btn-check) + .btn-outline-primary:active {
+  background-color: rgba(113, 170, 235, 0.22);
+  border-color: var(--vk-link);
+  color: var(--vk-text);
+}
+
+.btn-success {
+  --bs-btn-bg: #4d804d;
+  --bs-btn-border-color: #4d804d;
+  --bs-btn-hover-bg: #5a905a;
+  --bs-btn-hover-border-color: #5a905a;
+}
+
+.btn-outline-danger {
+  --bs-btn-color: #e64646;
+  --bs-btn-border-color: rgba(230, 70, 70, 0.5);
+  --bs-btn-hover-bg: rgba(230, 70, 70, 0.12);
+  --bs-btn-hover-color: #ff6b6b;
+}
+
+main .alert-danger {
+  background-color: rgba(230, 70, 70, 0.12);
+  border-color: rgba(230, 70, 70, 0.35);
+  color: #ebb;
+}
+
+main .alert-info {
+  background-color: rgba(113, 170, 235, 0.12);
+  border-color: rgba(113, 170, 235, 0.35);
+  color: var(--vk-text);
+}
+
+/* Лендинг «Войти» — отдельная кнопка */
+button.ovoshi-btn-login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0.5rem 1rem;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid var(--ovoshi-accent);
+  border-radius: 10px;
+  background-color: var(--ovoshi-accent) !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff;
+}
+
+button.ovoshi-btn-login:hover {
+  background-color: var(--ovoshi-accent-hover) !important;
+  border-color: var(--ovoshi-accent-hover);
+  color: #fff !important;
+  -webkit-text-fill-color: #fff;
+}
+
+button.ovoshi-btn-login:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(81, 129, 184, 0.45);
+}
+
+.ovoshi-btn-login__label {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff;
+}
